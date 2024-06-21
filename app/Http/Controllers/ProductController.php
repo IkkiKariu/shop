@@ -5,63 +5,52 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use App\Services\ProductService;
-use Illuminate\Support\Facades\Storage;
-
-use function PHPUnit\Framework\countOf;
 
 class ProductController extends APIController
 {
-    private ProductService $_service;
+    private ProductService $_productService;
 
     public function __construct(ProductService $service)
     {
-        $this->_service = $service;
+        $this->_productService = $service;
     }
 
     public function index(?string $category=null)
     {
-        $products = $this->_service->retrieveAll($category);
+        $products = $this->_productService->retrieveAll($category);
         
         return $products ? response()->json(['request_status' => 'success', 'data' => ['products' => $products]]) : response()->json(['request_status' => 'failure']);
     }
 
-    public function show(string $product_id)
+    public function show(string $product_id, ?string $admin=null)
     {
-        $product = $this->_service->retrieve($product_id);
+        $product = $this->_productService->retrieve($product_id, $admin);
         
-        return $product ? response()->json(['request_status' => 'success', 'data' => ['product' => $product]]) : response()->json(['request_status' => 'failure']);
+        return $product ? response()->json([
+            'request_status' => 'success', 'message' => 'product retrieved successfully', 'data' => ['product' => $product]
+            ]) : response()->json(['request_status' => 'failure', 'message' => 'product retrieve failed']);
     }
 
-    public function store(Request $request, ?string $photo)
+    public function store(Request $request)
     {
         $data = request()->json()->all();
 
-        $addSuccessfully = $this->_service->add($data);
-    }
+        $addedProductData = $this->_productService->add($data);
 
-    public function files(Request $request)
-    {
-        if(!$request->hasFile('product_photos'))
-        {
-            return response()->json(
-                ['response_status' => 'failure', 'message' => 'Product title photo adding failed']
-            );
-        }
-
-        $files = $request->file('product_photos');
-
-        var_dump($files);
+        return $addedProductData ? response()->json([
+            'response_status' => 'success', 'message' => 'product added successfully', "data" => ['addedProductData' => $addedProductData]
+        ]) : response()->json(['response_status' => 'failure', 'message' => 'product adding failed']);
     }
 
     public function update(string $product_id, Request $request)
     {
+        $data = $request->json()->all();
 
+        $updatedProductData = $this->_productService->update($product_id, $data);
     }
 
     public function remove(string $product_id, Request $request)
     {
 
     }
-
-    
 }

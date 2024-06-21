@@ -15,9 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
             $table->uuid('product_id');
-            $table->foreign('product_id')->references('id')->on('products');
-
-            $table->timestamps();
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
 
             $table->string('name', length: 127);
             $table->string('value', length: 127);
