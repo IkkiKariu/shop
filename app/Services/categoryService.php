@@ -106,6 +106,6 @@ class CategoryService
 
         if($validator->fails()) { return false; }
 
-        return false;
+        return true;
     }
 }

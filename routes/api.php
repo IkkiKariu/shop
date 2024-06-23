@@ -12,6 +12,7 @@ use App\Models\Category;
 // })->middleware('auth:sanctum');
 
 Route::prefix('products')->group(function () {
+    Route::get('/', [ProductController::class, 'index']);
     Route::get('/category/{category?}', [ProductController::class, 'index']);
     Route::get('{product_id}', [ProductController::class, 'show']);
 });
@@ -30,5 +31,9 @@ Route::prefix('/admin')->group(function () {
         Route::post('/add', [CategoryController::class, 'store']);
         Route::put('/update/{category_id}', [CategoryController::class, 'update']);
         Route::delete('/remove/{category_id}', [CategoryController::class, 'remove']);
+    });
+
+    Route::prefix('prices')->group(function() {
+        
     });
 });

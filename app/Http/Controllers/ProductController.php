@@ -34,7 +34,7 @@ class ProductController extends APIController
     public function store(Request $request)
     {
         $data = request()->json()->all();
-
+        
         $addedProductData = $this->_productService->add($data);
 
         return $addedProductData ? response()->json([

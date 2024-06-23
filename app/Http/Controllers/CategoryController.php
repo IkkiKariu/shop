@@ -45,7 +45,7 @@ class CategoryController extends Controller
 
     public function update(Request $request, string $categoryId)
     {
-        $data = $request()->json()->all();
+        $data = $request->json()->all();
 
         $updatedCategory = $this->_categoryService->update($categoryId, $data);
 

@@ -202,24 +202,7 @@ class ProductService
 
     public function update(string $id, ?array $productData)
     {
-        // // product id format is invalid
-        // try 
-        // {
-        //     $product = Product::where('id', $id)->first();
-        // }
-        // catch(QueryException $ex)
-        // {
-        //     return null;
-        // }
-
-        // // product with given id doesn't exist
-        // if (!$product) { return null; }
-
-
-        // $validationSucced = $this->validateProductData($productData);
         
-        // // validation failure
-        // if(!$validationSucced) { return null; }
     }
 
     public function delete(string $id)
