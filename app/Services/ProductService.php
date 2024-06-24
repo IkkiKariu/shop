@@ -202,12 +202,48 @@ class ProductService
 
     public function update(string $id, ?array $productData)
     {
-        
+        $product = $this->getModelIfExists($id);
+
+        if(!$product) { return null; }
+        if(!$productData) { return null; }
+
+        $validationRules = [
+            'name' => 'required|max:127|string|min:2',
+            'description' => 'max:255|string|min:5'
+        ];
+        $validator = Validator::make($productData, $validationRules);
+        if ($validator->fails()) { return null; }
+
+        $product->name = $productData['name'];
+        $product->description = key_exists('description', $productData) ? $productData['description'] : null;
+        $product->save();
+
+        return $product->toArray();
     }
 
     public function delete(string $id)
     {
+        $product = $this->getModelIfExists($id);
         
+        if (!$product) { return false; }
+
+        $product->delete();
+
+        return true;
+    }
+
+    private function getModelIfExists(string $id)
+    {
+        try
+        {
+            $product = Product::where('id', $id)->first();
+        }
+        catch (QueryException $ex)
+        {
+            return null;
+        }
+
+        return $product ? $product : null;
     }
 
     private function validateProductData(?array $productData): bool

@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductPhotoController;
 use App\Http\Controllers\CategoryController;
-use App\Models\Category;
+use App\Http\Controllers\PriceController;
+use App\Http\Controllers\PropertyController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -34,6 +35,18 @@ Route::prefix('/admin')->group(function () {
     });
 
     Route::prefix('prices')->group(function() {
-        
+        Route::get('/product/{product_id}', [PriceController::class, 'index']);
+        Route::get('/{price_id}', [PriceController::class, 'show']);
+        Route::post('/add/{product_id}', [PriceController::class, 'store']);
+        Route::put('update/{price_id}', [PriceController::class, 'update']);
+        Route::delete('remove/{price_id}', [PriceController::class, 'remove']);
+    });
+
+    Route::prefix('properties')->group(function () {
+        Route::get('/product/{product_id}', [PropertyController::class, 'index']);
+        Route::get('/{property_id}', [PropertyController::class, 'show']);
+        Route::post('/add/{product_id}', [PropertyController::class, 'store']);
+        Route::put('update/{property_id}', [PropertyController::class, 'update']);
+        Route::delete('remove/{property_id}', [PropertyController::class, 'remove']);
     });
 });
