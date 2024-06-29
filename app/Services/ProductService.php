@@ -30,13 +30,13 @@ class ProductService
             {
                 foreach ($relations as $key => $value)
                 {
-                    $productList[] = Product::where('id', $value->product_id)->first()->toArray();
+                    $productList[] = Product::with('prices')->where('id', $value->product_id)->first()->toArray();
                 }
             }
         }
         else
         {
-            $products = Product::get();
+            $products = Product::with('prices')->get();
 
             if($products)
             {
@@ -215,13 +215,16 @@ class ProductService
         if ($validator->fails()) { return null; }
 
         $product->name = $productData['name'];
-        $product->description = key_exists('description', $productData) ? $productData['description'] : null;
+        if (key_exists('description', $productData))
+        {
+            $product->description = $productData['description'];
+        }
         $product->save();
 
         return $product->toArray();
     }
 
-    public function delete(string $id)
+    public function remove(string $id)
     {
         $product = $this->getModelIfExists($id);
         
@@ -251,10 +254,10 @@ class ProductService
         if (!$productData) { return false; }
 
         $validationRules = [
-            'name' => 'required|max:127|string|min:2',
-            'description' => 'max:255|string|min:5',
+            'name' => 'required|max:127|string|min:1',
+            'description' => 'max:255|string|min:1',
             'categories' => 'required|array',
-            'categories.*' => 'required|string|max:127|min:3',
+            'categories.*' => 'required|string|max:127|min:1',
             'properties' => 'array',
             'properties.*.name' => 'max:127|required|string|min:1',
             'properties.*.value' => 'max:127|required|string|min:1',
@@ -267,6 +270,11 @@ class ProductService
 
         if($validator->fails()) { return false; }
 
+        foreach ($productData['prices'] as $price)
+        {
+            if(strlen(explode('.', $price['value'])[0]) > 9) { return false; }
+        }
+
         return true;
     }
-}
+}   

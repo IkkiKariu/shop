@@ -104,6 +104,8 @@ class PriceService
 
         if ($validator->fails()) { return false; }
 
+        if(strlen(explode('.', $data['value'])[0]) > 9) { return false; }
+
         return true;
     }
 }

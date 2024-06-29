@@ -19,7 +19,9 @@ class ProductController extends APIController
     {
         $products = $this->_productService->retrieveAll($category);
         
-        return $products ? response()->json(['request_status' => 'success', 'data' => ['products' => $products]]) : response()->json(['request_status' => 'failure']);
+        return $products ? response()->json([
+            'response_status' => 'success', 'mes' => 'products retrieved successfully', 'data' => ['products' => $products]
+        ]) : response()->json(['request_status' => 'failure', 'message' => 'products retrieve failed']);
     }
 
     public function show(string $product_id, ?string $admin=null)
@@ -27,13 +29,13 @@ class ProductController extends APIController
         $product = $this->_productService->retrieve($product_id, $admin);
         
         return $product ? response()->json([
-            'request_status' => 'success', 'message' => 'product retrieved successfully', 'data' => ['product' => $product]
+            'response_status' => 'success', 'message' => 'product retrieved successfully', 'data' => ['product' => $product]
             ]) : response()->json(['request_status' => 'failure', 'message' => 'product retrieve failed']);
     }
 
     public function store(Request $request)
     {
-        $data = request()->json()->all();
+        $data = $request->json()->all();
         
         $addedProductData = $this->_productService->add($data);
 
@@ -47,10 +49,18 @@ class ProductController extends APIController
         $data = $request->json()->all();
 
         $updatedProductData = $this->_productService->update($product_id, $data);
+
+        return $updatedProductData ? response()->json([
+            'response_status' => 'success', 'message' => 'product updated successfully', "data" => ['updatedProduct' => $updatedProductData]
+        ]) : response()->json(['response_status' => 'failure', 'message' => 'product update failed']);
     }
 
-    public function remove(string $product_id, Request $request)
+    public function remove(string $productId)
     {
+        $removedSuccessfully = $this->_productService->remove($productId);
 
+        return $removedSuccessfully ? response()->json([
+            'response_status' => 'success', 'message' => 'product removed successfully'
+        ]) : response()->json(['response_status' => 'failure', 'message' => 'product remove failed']);
     }
 }

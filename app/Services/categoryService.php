@@ -67,7 +67,10 @@ class CategoryService
         if(!$validatedSucced) { return null; }
 
         $category->name = $categoryData['name'];
-        $category->description = $categoryData['description'] ? $categoryData['description'] : null;
+        if (key_exists('description', $categoryData))
+        {
+            $category->description = $categoryData['description'];
+        }
         $category->save();
 
         return $this->retrieve($id);
@@ -98,8 +101,8 @@ class CategoryService
         if (!$categoryData) { return false; }
 
         $validationRules = [
-            'name' => 'required|string',
-            'description' => 'string'
+            'name' => 'required|string|max:127|min:1',
+            'description' => 'string|max:255|min:5'
         ];
 
         $validator = Validator::make($categoryData, $validationRules);

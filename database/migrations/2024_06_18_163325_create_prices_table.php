@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
 
             $table->string('condition', length: 255);
-            $table->decimal('value');
+            $table->decimal('value', total: 11, places: 2);
 
             $table->timestamps();
         });

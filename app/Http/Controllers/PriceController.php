@@ -32,7 +32,7 @@ class PriceController extends Controller
         ]) : response()->json(['response_status' => 'failure', 'message' => 'price data retrieve failed']);
     }
 
-    public function add(Request $request, string $productId)
+    public function store(Request $request, string $productId)
     {
         $data = $request->json()->all();
 

@@ -23,13 +23,14 @@ Route::prefix('/admin')->group(function () {
         Route::get('/{product_id}/{admin?}', [ProductController::class, 'show']);
         Route::post('/add', [ProductController::class, 'store']);
         Route::post('/addPhotos/{product_id}', [ProductPhotoController::class, 'store']);
+        Route::put('/update/{product_id}', [ProductController::class, 'update']);
         Route::delete('/remove/{product_id}', [ProductController::class, 'remove']);
     });
 
     Route::prefix('/categories')->group(function() {
         Route::get('/', [CategoryController::class, 'index']);
         Route::get('/{category_id}', [CategoryController::class, 'show']);
-        Route::post('/add', [CategoryController::class, 'store']);
+        Route::post('/create', [CategoryController::class, 'store']);
         Route::put('/update/{category_id}', [CategoryController::class, 'update']);
         Route::delete('/remove/{category_id}', [CategoryController::class, 'remove']);
     });
