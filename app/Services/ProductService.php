@@ -7,6 +7,7 @@ use App\Models\Price;
 use App\Models\Product;
 use App\Models\ProductCategoryRelationship;;
 use App\Models\Property;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 
@@ -233,6 +234,59 @@ class ProductService
         $product->delete();
 
         return true;
+    }
+
+    public function associateWithCategories(string $productId, array $categoriesData)
+    {
+        $guessedProduct = $this->getModelIfExists($productId);
+        if (!$guessedProduct) { return null; }
+
+
+        // validate incoming data
+        $validationRules = [
+            'categories' => 'required|array',
+            'categories.*' => 'required|string|max:127|min:1'
+        ];
+
+        $validator = Validator::make($categoriesData, $validationRules);
+        if ($validator->fails()) { return null; }
+
+
+        foreach ($categoriesData['categories'] as $categoryName)
+        {
+            $categoryName = mb_strtolower($categoryName);
+            $guessedCategory = Category::where('name', $categoryName)->first();
+
+            // some of given categories doesn`t exist
+            if (!$guessedCategory) { return null; }
+            
+            // product already associated with category
+            if ($this->isProductAssociatedWithCategory($guessedProduct->id, $guessedCategory->id))
+            {
+                return null;
+            }
+            
+            foreach ($categoriesData['categories'] as $categoryName)
+            {
+                $categoryName = mb_strtolower($categoryName);
+                $category = Category::where('name', $categoryName)->first();
+
+                $newProductCategoryRelationship = new ProductCategoryRelationship();
+                $newProductCategoryRelationship->product_id = $guessedProduct->id;
+                $newProductCategoryRelationship->category_id = $category->id;
+                $newProductCategoryRelationship->save();
+            }
+
+            return $this->retrieve(id: $guessedProduct->id, admin: 'full');
+        }
+    }
+
+
+    private function isProductAssociatedWithCategory(string $productId, string $categoryId)
+    {
+        $productCategoryRelationship = ProductCategoryRelationship::where('product_id', $productId)->where('category_id', $categoryId)->first();
+
+        return $productCategoryRelationship ? true : false;
     }
 
     private function getModelIfExists(string $id)
