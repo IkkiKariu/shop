@@ -11,15 +11,20 @@ class CategoryService
     public function add(?array $categoryData)
     {
         $validatedSucced = $this->validateData($categoryData);
-
         if(!$validatedSucced) { return null; }
 
+        $categoryName = mb_strtolower($categoryData['name']);
+        
+        // category with given name already exists
+        $guessedCategory = Category::where('name', $categoryName)->first();
+        if($guessedCategory) { return null; }
+
         $newCategory = new Category();
-        $newCategory->name = $categoryData['name'];
+        $newCategory->name = $categoryName;
         $newCategory->description = key_exists('description', $categoryData) ? $categoryData['description'] : null;
         $newCategory->save();
 
-        return $this->retrieve($newCategory->id);
+        return $newCategory->toArray();
     }
 
     public function retrieveAll()

@@ -19,7 +19,7 @@ class PriceController extends Controller
         $prices = $this->_priceService->retrieveAll($productId);
 
         return $prices ? response()->json([
-            'response_status' => 'success', 'message' => 'product prices retrieved succesfully', 'data' => ['productPrices' => $prices]
+            'response_status' => 'success', 'message' => 'product prices retrieved succesfully', 'data' => ['prices' => $prices]
         ]) : response()->json(['response_status' => 'failure', 'message' => 'product prices retrieve failed']);
     }
 
@@ -28,7 +28,7 @@ class PriceController extends Controller
         $price = $this->_priceService->retrieve($priceId);
 
         return $price ? response()->json([
-            'response_status' => 'success', 'message' => 'price data retrieved succesfully', 'data' => ['priceData' => $price]
+            'response_status' => 'success', 'message' => 'price data retrieved succesfully', 'data' => ['price' => $price]
         ]) : response()->json(['response_status' => 'failure', 'message' => 'price data retrieve failed']);
     }
 
@@ -39,7 +39,7 @@ class PriceController extends Controller
         $newPrice = $this->_priceService->add($productId, $data);
 
         return $newPrice ? response()->json([
-            'response_status' => 'success', 'message' => 'product price added succesfully', 'data' => ['productPrice' => $newPrice]
+            'response_status' => 'success', 'message' => 'product price added succesfully', 'data' => ['addedPrice' => $newPrice]
         ]) : response()->json(['response_status' => 'failure', 'message' => 'product price adding failed']);
     }
 

@@ -40,7 +40,7 @@ class ProductController extends APIController
         $addedProductData = $this->_productService->add($data);
 
         return $addedProductData ? response()->json([
-            'response_status' => 'success', 'message' => 'product added successfully', "data" => ['addedProductData' => $addedProductData]
+            'response_status' => 'success', 'message' => 'product added successfully', "data" => ['addedProduct' => $addedProductData]
         ]) : response()->json(['response_status' => 'failure', 'message' => 'product adding failed']);
     }
 
@@ -53,6 +53,28 @@ class ProductController extends APIController
         return $updatedProductData ? response()->json([
             'response_status' => 'success', 'message' => 'product updated successfully', "data" => ['updatedProduct' => $updatedProductData]
         ]) : response()->json(['response_status' => 'failure', 'message' => 'product update failed']);
+    }
+
+    public function addCategories(Request $request, string $productId)
+    {
+        $data = $request->json()->all();
+
+        $productData = $this->_productService->associateWithCategories($productId, $data);
+
+        return $productData ? response()->json([
+            'response_status' => 'success', 'message' => 'product associated with categories successfully', 'data' => ['product' => $productData]
+        ]) : response()->json(['reponse_status' => 'failure', 'message' => 'product and categories association failed']);
+    }
+    
+    public function removeCategories(Request $request, string $productId)
+    {
+        $data = $request->json()->all();
+
+        $productData = $this->_productService->dissociateCategories($productId, $data);
+
+        return $productData ? response()->json([
+            'response_status' => 'success', 'message' => 'product dissociated with categories successfully', 'data' => ['product' => $productData]
+        ]) : response()->json(['reponse_status' => 'failure', 'message' => 'product and categories dissociation failed']);
     }
 
     public function remove(string $productId)

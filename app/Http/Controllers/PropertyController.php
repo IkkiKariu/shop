@@ -19,7 +19,7 @@ class PropertyController extends Controller
         $properties = $this->_propertyService->retrieveAll($productId);
 
         return $properties ? response()->json([
-            'response_status' => 'success', 'message' => 'product properties retrieved successfully', 'data' => ['productProperties' => $properties]
+            'response_status' => 'success', 'message' => 'product properties retrieved successfully', 'data' => ['properties' => $properties]
         ]) : response()->json(['response_status' => 'failure', 'message' => 'product properties retrieve failed']);
     }
 
@@ -28,7 +28,7 @@ class PropertyController extends Controller
         $property = $this->_propertyService->retrieve($propertyId);
 
         return $property ? response()->json([
-            'response_status' => 'success', 'message' => 'product property retrieved successfully', 'data' => ['productProperty' => $property]
+            'response_status' => 'success', 'message' => 'product property retrieved successfully', 'data' => ['property' => $property]
         ]) : response()->json(['response_status' => 'failure', 'message' => 'product property retrieve failed']);
     }
 
@@ -39,7 +39,7 @@ class PropertyController extends Controller
         $newProperty = $this->_propertyService->add($productId, $data);
 
         return $newProperty ? response()->json([
-            'response_status' => 'success', 'message' => 'property added to product successfully', 'data' => ['newProductProperty' => $newProperty]
+            'response_status' => 'success', 'message' => 'property added to product successfully', 'data' => ['newProperty' => $newProperty]
         ]) : response()->json(['response_status' => 'failure', 'message' => 'adding property to product  failed']);
     }
 
@@ -50,7 +50,7 @@ class PropertyController extends Controller
         $updatedProperty = $this->_propertyService->update($propertyId, $data);
 
         return $updatedProperty ? response()->json([
-            'response_status' => 'success', 'message' => 'product property updated successfully', 'data' => ['updatedProductProperty' => $updatedProperty]
+            'response_status' => 'success', 'message' => 'product property updated successfully', 'data' => ['updatedProperty' => $updatedProperty]
         ]) : response()->json(['response_status' => 'failure', 'message' => 'product property update failed']);
     }
 

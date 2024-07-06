@@ -23,6 +23,8 @@ Route::prefix('/admin')->group(function () {
         Route::get('/{product_id}/{admin?}', [ProductController::class, 'show']);
         Route::post('/add', [ProductController::class, 'store']);
         Route::post('/addPhotos/{product_id}', [ProductPhotoController::class, 'store']);
+        Route::post('/addCategories/{product_id}', [ProductController::class, 'addCategories']);
+        Route::post('/removeCategories/{product_id}', [ProductController::class, 'removeCategories']);
         Route::put('/update/{product_id}', [ProductController::class, 'update']);
         Route::delete('/remove/{product_id}', [ProductController::class, 'remove']);
     });

@@ -19,7 +19,9 @@ class ProductService
 
         if($category)
         {
-            $category = Category::where('name', $category)->first();
+            $categoryName = mb_strtolower($category);
+
+            $category = Category::where('name', $categoryName)->first();
 
             // category with given name doesn't exist
             if(!$category) { return null; }
@@ -140,13 +142,16 @@ class ProductService
         // validation failure
         if(!$validationSucced) { return null; }
 
+        // lower case categories` names (to make them case insensitive)
+        $categories = array_map(function ($value) { return mb_strtolower($value); }, $productData['categories']);
+
         // remove category dublicates
-        $categories = array_unique($productData['categories']);
+        $categories = array_unique($categories);
 
         // check if some of given categories doesn't exisit
-        foreach ($categories as $key => $value)
+        foreach ($categories as $categoryName)
         {
-            $guessedCategory = Category::where('name', $value)->first();
+            $guessedCategory = Category::where('name', $categoryName)->first();
 
             if(!$guessedCategory) { return null; }
         }
@@ -161,9 +166,9 @@ class ProductService
         
         //create product_category_relationships table entries
 
-        foreach ($categories as $key => $value)
+        foreach ($categories as $categoryName)
         {
-            $category = Category::where('name', $value)->first();
+            $category = Category::where('name', $categoryName)->first();
 
             $product_category_relation = new ProductCategoryRelationship();
             $product_category_relation->product_id = $newProduct->id;
@@ -251,10 +256,12 @@ class ProductService
         $validator = Validator::make($categoriesData, $validationRules);
         if ($validator->fails()) { return null; }
 
+        // lower case categories` names (to make them case insensitive) and remove dublicates
+        $categoryNameList = array_map(function($value) { return mb_strtolower($value); }, $categoriesData['categories']);
+        $categoryNameList = array_unique($categoryNameList);
 
-        foreach ($categoriesData['categories'] as $categoryName)
+        foreach ($categoryNameList as $categoryName)
         {
-            $categoryName = mb_strtolower($categoryName);
             $guessedCategory = Category::where('name', $categoryName)->first();
 
             // some of given categories doesn`t exist
@@ -265,20 +272,62 @@ class ProductService
             {
                 return null;
             }
-            
-            foreach ($categoriesData['categories'] as $categoryName)
-            {
-                $categoryName = mb_strtolower($categoryName);
-                $category = Category::where('name', $categoryName)->first();
-
-                $newProductCategoryRelationship = new ProductCategoryRelationship();
-                $newProductCategoryRelationship->product_id = $guessedProduct->id;
-                $newProductCategoryRelationship->category_id = $category->id;
-                $newProductCategoryRelationship->save();
-            }
-
-            return $this->retrieve(id: $guessedProduct->id, admin: 'full');
         }
+
+        foreach ($categoryNameList as $categoryName)
+        {
+            $category = Category::where('name', $categoryName)->first();
+
+            $newProductCategoryRelationship = new ProductCategoryRelationship();
+            $newProductCategoryRelationship->product_id = $guessedProduct->id;
+            $newProductCategoryRelationship->category_id = $category->id;
+            $newProductCategoryRelationship->save();
+        }
+
+        return $this->retrieve(id: $guessedProduct->id, admin: 'full');
+    }
+
+    public function dissociateCategories(string $productId, array $categoriesData)
+    {
+        $guessedProduct = $this->getModelIfExists($productId);
+        if (!$guessedProduct) { return null; }
+
+        // validate incoming data
+        $validationRules = [
+            'categories' => 'required|array',
+            'categories.*' => 'required|string|max:127|min:1'
+        ];
+
+        $validator = Validator::make($categoriesData, $validationRules);
+        if ($validator->fails()) { return null; }
+
+        // lower case categories` names (to make them case insensitive) and remove dublicates
+        $categoryNameList = array_map(function($value) { return mb_strtolower($value); }, $categoriesData['categories']);
+        $categoryNameList = array_unique($categoryNameList);
+
+        foreach ($categoryNameList as $categoryName)
+        {
+            $guessedCategory = Category::where('name', $categoryName)->first();
+
+            // some of given categories doesn`t exist
+            if (!$guessedCategory) { return null; }
+            
+            // product isn`t associated with category
+            if (!$this->isProductAssociatedWithCategory($guessedProduct->id, $guessedCategory->id))
+            {
+                return null;
+            }
+        }
+
+        foreach ($categoryNameList as $categoryName)
+        {
+            $category = Category::where('name', $categoryName)->first();
+
+            $productCategoryRelationship = ProductCategoryRelationship::where('product_id', $guessedProduct->id)->where('category_id', $category->id)->first();
+            $productCategoryRelationship->delete(); 
+        }
+
+        return $this->retrieve(id: $guessedProduct->id, admin: 'full');
     }
 
 
