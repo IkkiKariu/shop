@@ -20,7 +20,7 @@ class PriceController extends Controller
 
         return $prices ? response()->json([
             'response_status' => 'success', 'message' => 'product prices retrieved succesfully', 'data' => ['prices' => $prices]
-        ]) : response()->json(['response_status' => 'failure', 'message' => 'product prices retrieve failed']);
+        ]) : response()->json(['response_status' => 'failure', 'message' => 'product prices retrieving failed']);
     }
 
     public function show(string $priceId)
@@ -29,7 +29,7 @@ class PriceController extends Controller
 
         return $price ? response()->json([
             'response_status' => 'success', 'message' => 'price data retrieved succesfully', 'data' => ['price' => $price]
-        ]) : response()->json(['response_status' => 'failure', 'message' => 'price data retrieve failed']);
+        ]) : response()->json(['response_status' => 'failure', 'message' => 'price data retrieving failed']);
     }
 
     public function store(Request $request, string $productId)
@@ -39,8 +39,8 @@ class PriceController extends Controller
         $newPrice = $this->_priceService->add($productId, $data);
 
         return $newPrice ? response()->json([
-            'response_status' => 'success', 'message' => 'product price added succesfully', 'data' => ['addedPrice' => $newPrice]
-        ]) : response()->json(['response_status' => 'failure', 'message' => 'product price adding failed']);
+            'response_status' => 'success', 'message' => 'price assigned to product succesfully', 'data' => ['assignedPrice' => $newPrice]
+        ]) : response()->json(['response_status' => 'failure', 'message' => 'product price assignment failed']);
     }
 
     public function update(Request $request, string $priceId)

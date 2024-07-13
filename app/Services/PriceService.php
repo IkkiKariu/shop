@@ -62,7 +62,7 @@ class PriceService
         $validatedSucced = $this->validateData($priceData);
         if (!$validatedSucced) { return null; }
 
-        $price->condition = $priceData['condition'];
+        if(key_exists('condition', $priceData)) { $price->condition = $priceData['condition']; }
         $price->value = $priceData['value'];
         $price->save();
 
@@ -96,7 +96,7 @@ class PriceService
     private function validateData(array $data)
     {
         $validationRules = [
-            'condition' => 'max:255|required|string|min:1',
+            'condition' => 'max:255|string|min:1',
             'value' => 'decimal:2|required'
         ];
 

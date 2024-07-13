@@ -20,7 +20,7 @@ class PropertyController extends Controller
 
         return $properties ? response()->json([
             'response_status' => 'success', 'message' => 'product properties retrieved successfully', 'data' => ['properties' => $properties]
-        ]) : response()->json(['response_status' => 'failure', 'message' => 'product properties retrieve failed']);
+        ]) : response()->json(['response_status' => 'failure', 'message' => 'product properties retrieving failed']);
     }
 
     public function show(string $propertyId)

@@ -7,7 +7,6 @@ use App\Models\Price;
 use App\Models\Product;
 use App\Models\ProductCategoryRelationship;;
 use App\Models\Property;
-use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 
@@ -203,7 +202,7 @@ class ProductService
             $newPrice->save();
         }
 
-        return $this->retrieve(id: $newProduct->id, admin: 'yes')   ;
+        return $this->retrieve(id: $newProduct->id, admin: 'yes');
     }
 
     public function update(string $id, ?array $productData)
@@ -227,7 +226,7 @@ class ProductService
         }
         $product->save();
 
-        return $product->toArray();
+        return $this->retrieve(id: $product->id, admin: 'yes');
     }
 
     public function remove(string $id)
@@ -357,7 +356,7 @@ class ProductService
         if (!$productData) { return false; }
 
         $validationRules = [
-            'name' => 'required|max:127|string|min:1',
+            'name' => 'required|max:127|string|min:1|unique:products,name',
             'description' => 'max:255|string|min:1',
             'categories' => 'required|array',
             'categories.*' => 'required|string|max:127|min:1',

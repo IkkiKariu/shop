@@ -20,7 +20,7 @@ class ProductController extends APIController
         $products = $this->_productService->retrieveAll($category);
         
         return $products ? response()->json([
-            'response_status' => 'success', 'mes' => 'products retrieved successfully', 'data' => ['products' => $products]
+            'response_status' => 'success', 'message' => 'products retrieved successfully', 'data' => ['products' => $products]
         ]) : response()->json(['request_status' => 'failure', 'message' => 'products retrieve failed']);
     }
 

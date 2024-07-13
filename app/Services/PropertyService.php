@@ -64,7 +64,7 @@ class PropertyService
         $validatedSucced = $this->validateData($propertyData);
         if (!$validatedSucced) { return null; }
 
-        $property->name = $propertyData['name'];
+        if(key_exists('name', $propertyData)) { $property->name = $propertyData['name']; }
         $property->value = $propertyData['value'];
         $property->save();
 
@@ -102,8 +102,8 @@ class PropertyService
         if (!$data) { return false; }
 
         $valdiationRules = [
-            'name' => 'max:127|required|string|min:1',
-            'value' => 'max:127|required|string|min:1'
+            'name' => 'max:127|string|min:1',
+            'value' => 'required|max:127|string|min:1'
         ];
 
         $validator = Validator::make($data, $valdiationRules);

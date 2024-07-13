@@ -16,17 +16,30 @@ Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
     Route::get('/category/{category?}', [ProductController::class, 'index']);
     Route::get('{product_id}', [ProductController::class, 'show']);
+    Route::get('/photos/{photo_id}', [ProductPhotoController::class, 'show']);
+    Route::get('/photos/product/{product_id}', [ProductPhotoController::class, 'index']);
+});
+
+Route::prefix('productPhotos')->group(function () {
+    Route::get('/product/{product_id}', [ProductPhotoController::class, 'index']);
+    Route::get('{product_photo_id}', [ProductPhotoController::class, 'show']);
 });
 
 Route::prefix('/admin')->group(function () {
     Route::prefix('/products')->group(function () {
         Route::get('/{product_id}/{admin?}', [ProductController::class, 'show']);
         Route::post('/add', [ProductController::class, 'store']);
-        Route::post('/addPhotos/{product_id}', [ProductPhotoController::class, 'store']);
         Route::post('/addCategories/{product_id}', [ProductController::class, 'addCategories']);
         Route::post('/removeCategories/{product_id}', [ProductController::class, 'removeCategories']);
         Route::put('/update/{product_id}', [ProductController::class, 'update']);
         Route::delete('/remove/{product_id}', [ProductController::class, 'remove']);
+    });
+
+    Route::prefix('productPhotos')->group(function () {
+        Route::get('/product/{product_id}', [ProductPhotoController::class, 'index']);
+        Route::get('{product_photo_id}', [ProductPhotoController::class, 'show']);
+        Route::post('/add/{product_id}', [ProductPhotoController::class, 'store']);
+        Route::delete('/remove/{product_photo_id}', [ProductPhotoController::class, 'remove']);
     });
 
     Route::prefix('/categories')->group(function() {

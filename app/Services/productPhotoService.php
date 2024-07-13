@@ -6,9 +6,9 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductCategoryRelationship;
 use App\Models\ProductPhoto;
-
-;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Property;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\UploadedFile;
@@ -60,23 +60,63 @@ class ProductPhotoService
     }
 
 
-    public function retrieve(string $productPhotoId)
+    public function retrieve(string $id)
     {
-        
+        $productPhotoModel = $this->getModelIfExists($id);
+        if (!$productPhotoModel) { return null; }
+
+        if(!Storage::disk('local')->exists($productPhotoModel->path)) { return null; }
+
+        return Storage::download($productPhotoModel->path);
     }
 
     public function retrieveAll(string $productId)
     {
+        try
+        {
+            $productPhotoModels = ProductPhoto::where('product_id', $productId)->get();
+            if(!$productPhotoModels) { return null; }
+        }
+        catch (QueryException $ex)
+        {
+            return null; 
+        }
 
+        $productPhotoIdList = [];
+
+        foreach ($productPhotoModels as $productPhotoModel)
+        {
+            $productPhotoIdList[] = $productPhotoModel->id;
+        }
+
+        return $productPhotoIdList;
     }
 
-    // public function update(string $productId, mixed $photos)
-    // {
-        
-    // }
-
-    public function delete(string $productId, mixed $photos)
+    public function remove(string $id)
     {
-        
+        $productPhotoModel = $this->getModelIfExists($id);
+        if (!$productPhotoModel) { return false; }
+
+        if (!Storage::disk('local')->exists($productPhotoModel->path)) { return false; }
+
+        Storage::disk('local')->delete($productPhotoModel->path);
+        $productPhotoModel->delete();
+
+        return true;
+    }
+
+    private function getModelIfExists(string $id)
+    {
+        try
+        {
+            $productPhoto = ProductPhoto::where('id', $id)->first();
+            if (!$productPhoto) { return null; }
+        }
+        catch (QueryException $ex)
+        {
+            return null;
+        }
+
+        return $productPhoto;
     }
 }
