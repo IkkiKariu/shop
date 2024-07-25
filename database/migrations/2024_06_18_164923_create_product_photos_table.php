@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_photos', function (Blueprint $table) {
-            $table->uuid('id');
+            $table->uuid('id')->primary();
 
             $table->uuid('product_id');
             $table->foreign('product_id')->references('id')->on('products');
