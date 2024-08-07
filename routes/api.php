@@ -59,7 +59,7 @@ Route::middleware(EnsureTokenIsValid::class)->group(function () {
     
         Route::prefix('/productPhotos')->group(function () {
             Route::get('/product/{product_id}', [ProductPhotoController::class, 'index']);
-            Route::get('{product_photo_id}', [ProductPhotoController::class, 'show']);
+            Route::get('/{product_photo_id}', [ProductPhotoController::class, 'show']);
             Route::post('/add/{product_id}', [ProductPhotoController::class, 'store']);
             Route::delete('/remove/{product_photo_id}', [ProductPhotoController::class, 'remove']);
         });
