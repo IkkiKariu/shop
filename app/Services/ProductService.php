@@ -40,9 +40,25 @@ class ProductService
         {
             $products = Product::with('prices')->get();
 
-            if($products)
+            if (!$products)
             {
-                $productList = $products->toArray();
+                return null;
+            }
+
+            $productList = $products->toArray();
+
+            foreach ($productList as &$product)
+            {
+                $product['categories'] = [];
+
+                $productCategoryRelationships = ProductCategoryRelationship::where('product_id', $product['id'])->get();
+
+                foreach ($productCategoryRelationships as $productCategoryRelationship)
+                {
+                    $category = Category::where('id', $productCategoryRelationship->category_id)->first();
+
+                    $product['categories'][] = ['id' => $category->id, 'name' => $category->name];
+                }
             }
         }
 

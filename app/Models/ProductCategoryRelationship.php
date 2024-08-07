@@ -18,6 +18,8 @@ class ProductCategoryRelationship extends Model
 
     protected $fillable = ['product_id', 'category_id'];
 
+    public $timestamps = false;
+
     public function product(): HasOne 
     {
         return $this->hasOne(Product::class, 'id', 'product_id');

@@ -21,7 +21,7 @@ class EnsureTokenIsValid
         $guessedToken = $request->bearerToken();    
         if (!$guessedToken)
         {
-            return response()->json(['response_status' => 'failure', 'message' => 'authentication token is required']);
+            return response()->json(['response_status' => 'failure', 'message' => 'authentication token is required'])->setStatusCode(401);
         }
         
         try {
@@ -29,10 +29,10 @@ class EnsureTokenIsValid
 
             if (!$token)
             {
-                return response()->json(['response_status' => 'failure', 'message' => 'authentication token is invalid']);
+                return response()->json(['response_status' => 'failure', 'message' => 'authentication token is invalid'])->setStatusCode(401);
             }
         } catch (QueryException $ex) {
-            return response()->json(['response_status' => 'failure', 'message' => 'authentication token is invalid']);
+            return response()->json(['response_status' => 'failure', 'message' => 'authentication token is invalid'])->setStatusCode(401);
         }
 
         return $next($request);

@@ -23,7 +23,7 @@ class AuthenticationController extends Controller
 
         return $token ? response()->json([
             'response_status' => 'success', 'message' => 'user authentication succed', 'data' => ['token' => $token]
-        ]) : response()->json(['response_status' => 'failure', 'message' => 'user authentication failed; check credentials']);
+        ]) : response()->json(['response_status' => 'failure', 'message' => 'user authentication failed; check credentials'])->setStatusCode(401);
     }
 
     public function deauthenticate(Request $request)
