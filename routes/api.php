@@ -16,6 +16,7 @@ Route::prefix('/users')->group(function () {
     Route::post('/auth', [AuthenticationController::class, 'authenticate']);
     Route::delete('/deauth', [AuthenticationController::class, 'deauthenticate'])->middleware(EnsureTokenIsValid::class);
     Route::delete('/delete', [UserController::class, 'remove'])->middleware(EnsureTokenIsValid::class);
+    Route::get('/personalData', [UserController::class, 'show'])->middleware(EnsureTokenIsValid::class);
 });
 
 Route::prefix('/products')->group(function () {

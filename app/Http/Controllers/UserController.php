@@ -14,6 +14,13 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
+    public function show(Request $request)
+    {
+        $userCredentials = $this->userService->retrieveCredentials($request->bearerToken());
+
+        return response()->json(['response_status' => 'success', 'message' => 'user credenitials retrieved successfully', 'data' => ['userCredentials' => $userCredentials]]);
+    }
+
     public function remove(Request $request)
     {
         $token = $request->bearerToken();
